@@ -13,21 +13,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Typed text animation for hero section
 function initTypedText() {
-    if (document.getElementById('typed-text')) {
-        new Typed('#typed-text', {
-            strings: [
-                'Профессиональные<br>нотариальные услуги',
-                'Надежность и<br>конфиденциальность',
-                'Оперативно и<br>качественно'
-            ],
-            typeSpeed: 50,
-            backSpeed: 30,
-            backDelay: 2000,
-            loop: true,
-            showCursor: true,
-            cursorChar: '|'
+    const typedElement = document.getElementById('typed-text');
+    if (!typedElement) return;
+    
+    // Создаем экземпляр Typed и сохраняем ссылку на него
+    const typedInstance = new Typed('#typed-text', {
+        strings: [
+            'Профессиональные<br>нотариальные услуги',
+            'Надежность и<br>конфиденциальность',
+            'Оперативно и<br>качественно'
+        ],
+        typeSpeed: 50,
+        backSpeed: 30,
+        backDelay: 2000,
+        loop: true,
+        showCursor: true,
+        cursorChar: '|'
+    });
+    
+    // Отслеживаем видимость элемента и приостанавливаем анимацию при уходе с экрана
+    const typedObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Элемент виден - возобновляем анимацию
+                if (typedInstance && typeof typedInstance.start === 'function') {
+                    typedInstance.start();
+                }
+            } else {
+                // Элемент ушел с экрана - приостанавливаем анимацию
+                if (typedInstance && typeof typedInstance.stop === 'function') {
+                    typedInstance.stop();
+                }
+            }
         });
-    }
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px'
+    });
+    
+    // Наблюдаем за элементом с текстом
+    typedObserver.observe(typedElement);
 }
 
 // Scroll reveal animations
